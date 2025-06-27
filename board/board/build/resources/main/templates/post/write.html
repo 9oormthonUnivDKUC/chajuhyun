@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>게시글 작성/수정</title>
+    <meta charset="UTF-8">
+    <script src="https://cdn.jsdelivr.net/npm/dayjs@1/dayjs.min.js"></script>
+</head>
+<body>
+<h1 th:text="${post != null} ? '게시글 수정' : '게시글 작성'">게시글 작성</h1>
+<form id="saveForm" action="#" method="post">
+    <input type="hidden" id="id" name="id" th:value="${post != null} ? ${post.id} : ''" />
+    <p>
+        <label>제목: <input type="text" id="title" name="title" th:value="${post != null} ? ${post.title} : ''"/></label>
+    </p>
+    <p>
+        <label>내용: <textarea id="content" name="content" th:text="${post != null} ? ${post.content} : ''"></textarea></label>
+    </p>
+    <p>
+        <label>작성자: <input type="text" id="writer" name="writer" th:value="${post != null} ? ${post.writer} : ''"/></label>
+    </p>
+    <p>
+        <label>공지여부: <input type="checkbox" id="noticeYn" name="noticeYn" th:checked="${post != null and post.noticeYn}"/></label>
+    </p>
+    <p>
+        <label>작성일: <input type="text" id="createdDate" name="createdDate" readonly /></label>
+    </p>
+    <button type="submit">저장</button>
+</form>
+
+<script>
+    window.onload = () => {
+        renderPostInfo();
+    }
+
+    // 게시글 상세정보 렌더링
+    function renderPostInfo() {
+        const post = /*[[${post}]]*/ null;
+
+        if (!post) {
+            initCreatedDate();
+            return false;
+        }
+
+        const form = document.getElementById('saveForm');
+        const fields = ['id', 'title', 'content', 'writer', 'noticeYn'];
+        form.noticeYn.checked = post.noticeYn;
+        form.createdDate.value = dayjs(post.createdDate).format('YYYY-MM-DD HH:mm');
+
+        fields.forEach(field => {
+            form[field].value = post[field];
+        });
+    }
+
+    // 등록일 초기화
+    function initCreatedDate() {
+        document.getElementById('createdDate').value = dayjs().format('YYYY-MM-DD HH:mm');
+    }
+</script>
+</body>
+</html>
